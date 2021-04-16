@@ -13,9 +13,10 @@ class DatabaseConnector {
         $servername = "localhost";        
 
         try{
-            $conn = new PDO("mysql:host=$servername;dbname=lab_test", $username, $password);
 
-        } catch(PDOException $e){
+            $this->dbConnection = new \PDO("mysql:host=$servername;dbname=lab_test", $username, $password);
+
+        } catch(\PDOException $e){
             
             exit($e->getMessage());
         }
