@@ -14,9 +14,9 @@ class KeyRepository {
     {
         $statement = "
             SELECT 
-                id, firstname, lastname, firstparent_id, secondparent_id
+                mykey, value, timestamp
             FROM
-                person;
+                master_key;
         ";
 
         try {
@@ -32,13 +32,16 @@ class KeyRepository {
     {
         $statement = "
             SELECT 
-                id, firstname, lastname, firstparent_id, secondparent_id
+                mykey, value, timestamp
             FROM
-                person;
+                master_key   
+            WHERE 
+                id = ?;
         ";
 
         try {
-            $statement = $this->db->query($statement);
+            $statement = $this->db->prepare($statement);
+            $statement->execute(array($keyvalue));
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
@@ -65,23 +68,25 @@ class KeyRepository {
     }
     
     public function insert(Array $input)
-    {
+    {        
         $statement = "
-            INSERT INTO person 
-                (firstname, lastname, firstparent_id, secondparent_id)
+            INSERT INTO master_key 
+                (mykey, value, timestamp)
             VALUES
-                (:firstname, :lastname, :firstparent_id, :secondparent_id);
+                (:mykey, :value, :timestamp);
         ";
 
         try {
+            $timestamp = new \DateTime();
+            $time['timestamp'] = $timestamp->format('U');
             $statement = $this->db->prepare($statement);
             $statement->execute(array(
-                'firstname' => $input['firstname'],
-                'lastname'  => $input['lastname'],
-                'firstparent_id' => $input['firstparent_id'] ?? null,
-                'secondparent_id' => $input['secondparent_id'] ?? null,
+                'mykey' => $input['mykey'],
+                'value'  => $input['value'],
+                'timestamp' => $time['timestamp'],               
             ));
-            return $statement->rowCount();
+            
+            return array_merge($input,$time);
         } catch (\PDOException $e) {
             exit($e->getMessage());
         }    
