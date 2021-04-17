@@ -12,7 +12,7 @@ class KeyController {
     private $jsonPost;
     private $keyrepository;
 
-    public function __construct($conn, $method,$kvalue, $jsonPost)
+    public function __construct($conn, $method, $kvalue, $jsonPost)
     {        
         $this->db = $conn;
         $this->requestMethod =  $method;
@@ -30,8 +30,15 @@ class KeyController {
             case 'GET':                
                 if (strtolower($this->keyValue) != "get_all_records") 
                 {
-                    $response = $this->getKey($this->keyValue);
-                    echo $response;                
+                    if (strpos($this->keyValue, '?') !== false) {
+                        $findKey = explode( '?', $this->keyValue);
+                        $findtimestamp = explode( '=', $findKey[1]);
+                        $response = $this->getKeyHistory($findKey[0], $findtimestamp[1]);
+                        echo $response;
+                    } else {
+                        $response = $this->getKey($this->keyValue);
+                        echo $response;                
+                    }
                 } 
                 else if(strtolower($this->keyValue) == "get_all_records") 
                 {
@@ -104,6 +111,17 @@ class KeyController {
 
         return json_encode($res);
     }    
+
+    private function getKeyHistory($key,$timestamp)
+    {
+        $res = $this->keyrepository->getKeyHistory($key,$timestamp);   
+
+        if (! $res) {
+            return $this->notFoundResponse();
+        }
+
+        return json_encode($res);
+    }  
 
     private function getAllKey(){
         

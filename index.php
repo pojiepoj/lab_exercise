@@ -10,8 +10,9 @@ header("Access-Control-Allow-Methods: GET,POST,PUT");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = explode( '/', $uri );
+$req_url = parse_url($_SERVER['REQUEST_URI']);
+
+$uri = explode( '/', $req_url['path']);
 
 //retrieves server request method
 $requestMethod = $_SERVER["REQUEST_METHOD"];
@@ -21,16 +22,21 @@ if ($uri[1] !== 'keystore') {
      exit();
 }
 
+//take key for url
+$keyId = null;
+if(isset($uri[2])) {
+     $keyId = $uri[2];
+     if(array_key_exists("query",$req_url))
+     {
+          $keyId = $keyId."?".$req_url['query'];
+     }
+}
+
 // Takes raw data from the request
 $json = file_get_contents('php://input');
 $jsonPost = null;
 if(!empty($json)){
      $jsonPost = $json;
-}
-
-$keyId = null;
-if(isset($uri[2])) {
-     $keyId = $uri[2];
 }
 
 $controller = new KeyController($dbConnection, $requestMethod, $keyId, $jsonPost);

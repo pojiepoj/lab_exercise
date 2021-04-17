@@ -143,8 +143,32 @@ class KeyRepository {
         } catch (\PDOException $e) {
             exit($e->getMessage());
         } 
+    }
 
+    public function getKeyHistory($keyvalue,$timestamp)
+    {
+        $statement = "
+            SELECT 
+                mykey, value, timestamp
+            FROM
+                key_history   
+            WHERE 
+                mykey = :mykey 
+            AND
+                timestamp = :timestamp;
+        ";
 
+        try {
+            $statement = $this->db->prepare($statement);
+            $statement->execute(array(
+                'mykey' => $keyvalue,
+                'timestamp' => $timestamp,   
+            ));
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return $result;
+        } catch (\PDOException $e) {
+            exit($e->getMessage());
+        }
     }
 
 }
