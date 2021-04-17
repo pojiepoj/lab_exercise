@@ -36,7 +36,7 @@ class KeyRepository {
             FROM
                 master_key   
             WHERE 
-                id = ?;
+                mykey = ?;
         ";
 
         try {
@@ -49,24 +49,25 @@ class KeyRepository {
         }
     }
 
-    public function findhistory($keyvalue, $timestamp)
+    public function checkKeyExist($input) 
     {
         $statement = "
             SELECT 
-                id, firstname, lastname, firstparent_id, secondparent_id
+                mykey
             FROM
-                person;
+                master_key
+            WHERE
+                mykey = ?;
         ";
-
         try {
-            $statement = $this->db->query($statement);
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
+            $statement = $this->db->prepare($statement);
+            $statement->execute(array($input));                     
+            return $statement->rowCount();
         } catch (\PDOException $e) {
             exit($e->getMessage());
-        }
+        }        
     }
-    
+
     public function insert(Array $input)
     {        
         $statement = "
@@ -90,33 +91,60 @@ class KeyRepository {
         } catch (\PDOException $e) {
             exit($e->getMessage());
         }    
-    }
+    }    
 
-    public function update($id, Array $input)
-    {
+    public function update(Array $input)
+    {        
         $statement = "
-            UPDATE person
+            UPDATE master_key 
             SET 
-                firstname = :firstname,
-                lastname  = :lastname,
-                firstparent_id = :firstparent_id,
-                secondparent_id = :secondparent_id
-            WHERE id = :id;
+                value = :value,
+                timestamp  = :timestamp
+            WHERE 
+                mykey = :mykey;
         ";
 
         try {
+            $timestamp = new \DateTime();
+            $time['timestamp'] = $timestamp->format('U');
+            
             $statement = $this->db->prepare($statement);
+            
             $statement->execute(array(
-                'id' => (int) $id,
-                'firstname' => $input['firstname'],
-                'lastname'  => $input['lastname'],
-                'firstparent_id' => $input['firstparent_id'] ?? null,
-                'secondparent_id' => $input['secondparent_id'] ?? null,
+                'mykey' => $input['mykey'],
+                'value' => $input['value'],
+                'timestamp'  => $time['timestamp'],
             ));
-            return $statement->rowCount();
+            
+            return array_merge($input,$time);
         } catch (\PDOException $e) {
             exit($e->getMessage());
         }    
     }    
+
+    public function insertHistory($keyvalue)
+    {
+        $res = $this->find($keyvalue);
+
+        $statement = "
+        INSERT INTO key_history 
+            (mykey, value, timestamp)
+        VALUES
+            (:mykey, :value, :timestamp);
+        ";
+        try{
+            $statement = $this->db->prepare($statement);
+            $statement->execute(array(
+                'mykey' => $res[0]['mykey'],
+                'value'  => $res[0]['value'],
+                'timestamp' => $res[0]['timestamp'],               
+            ));
+            return $statement->rowCount();
+        } catch (\PDOException $e) {
+            exit($e->getMessage());
+        } 
+
+
+    }
 
 }

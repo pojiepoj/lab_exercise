@@ -43,14 +43,16 @@ class KeyController {
 
             case 'POST':                
                 if($this->jsonPost){
-                    $jdecode = json_decode($this->jsonPost);
-                    if(property_exists($jdecode,"mykey") && property_exists($jdecode,"value")){
-                        echo "exist";
+                    $jdecode = json_decode($this->jsonPost, true);
+                    if(array_key_exists("mykey",$jdecode) && array_key_exists("value",$jdecode)){
+                        $response = $this->insertUpdateKey($jdecode); 
+                        echo $response;
                     }else{
                       echo "json key mykey or value doesnt exist";
                     }
                 }else{
-                    $response = $this->notFoundResponse();                       
+                    //If no json pass, randomly generate a key and value.
+                    $response = $this->generateKey();                       
                     echo $response;
                 }
                 break;
@@ -72,6 +74,24 @@ class KeyController {
         $res = $this->keyrepository->insert($input);        
 
         return json_encode($res);
+    }
+
+    private function insertUpdateKey(Array $input) 
+    {        
+        $check = $this->keyrepository->checkKeyExist($input['mykey']);   
+        if ($check) {
+            $history = $this->keyrepository->insertHistory($input['mykey']);
+            if($history) {                
+                $res = $this->keyrepository->update($input);
+                return json_encode($res);
+            }else{
+                $res["status"] = "Unable to save history";
+                return json_encode($res);
+            }            
+        } else {
+            $res = $this->keyrepository->insert($input);
+            return json_encode($res);
+        }        
     }
 
     private function getKey($key)
