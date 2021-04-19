@@ -1,6 +1,9 @@
 # lab_exercise
  slab exercise
 
+http url
+http://128.199.102.121/keystore
+
 API Name
 - {url}/keystore 
 POST method to insert new keys and values passing Json.
