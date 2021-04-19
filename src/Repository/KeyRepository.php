@@ -42,7 +42,7 @@ class KeyRepository {
         try {
             $statement = $this->db->prepare($statement);
             $statement->execute(array($keyvalue));
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $statement->fetch(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
             exit($e->getMessage());
@@ -135,9 +135,9 @@ class KeyRepository {
         try{
             $statement = $this->db->prepare($statement);
             $statement->execute(array(
-                'mykey' => $res[0]['mykey'],
-                'value'  => $res[0]['value'],
-                'timestamp' => $res[0]['timestamp'],               
+                'mykey' => $res['mykey'],
+                'value'  => $res['value'],
+                'timestamp' => $res['timestamp'],               
             ));
             return $statement->rowCount();
         } catch (\PDOException $e) {
@@ -164,7 +164,7 @@ class KeyRepository {
                 'mykey' => $keyvalue,
                 'timestamp' => $timestamp,   
             ));
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $statement->fetch(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
             exit($e->getMessage());
