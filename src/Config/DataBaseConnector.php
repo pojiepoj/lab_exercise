@@ -9,7 +9,7 @@ class DatabaseConnector
     public function __construct()
     {
         $username = "newuser";
-        $password = "newuser123!";
+        $password = "password123!";
         $servername = "localhost";        
 
         try{
