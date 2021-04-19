@@ -32,7 +32,7 @@ class KeyRepository {
     {
         $statement = "
             SELECT 
-                value, timestamp
+                mykey, value, timestamp
             FROM
                 master_key   
             WHERE 
@@ -149,7 +149,7 @@ class KeyRepository {
     {
         $statement = "
             SELECT 
-                value, timestamp
+                mykey, value, timestamp
             FROM
                 key_history   
             WHERE 
