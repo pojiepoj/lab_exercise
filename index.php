@@ -40,4 +40,4 @@ if(!empty($json)){
 }
 
 $controller = new KeyController($dbConnection, $requestMethod, $keyId, $jsonPost);
-$controller->processRequest();
+echo $controller->processRequest();

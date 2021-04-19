@@ -34,17 +34,17 @@ class KeyController {
                         $findKey = explode( '?', $this->keyValue);
                         $findtimestamp = explode( '=', $findKey[1]);
                         $response = $this->getKeyHistory($findKey[0], $findtimestamp[1]);
-                        echo $response;
+                        return $response;
                     } else {
                         $response = $this->getKey($this->keyValue);
-                        echo $response;                
+                        return $response;                
                     }
                 } 
                 else if(strtolower($this->keyValue) == "get_all_records") 
                 {
                     
                     $response = $this->getAllKey();
-                    echo $response;                
+                    return $response;                
                 }                               
                 break;
 
@@ -53,20 +53,20 @@ class KeyController {
                     $jdecode = json_decode($this->jsonPost, true);
                     if(array_key_exists("mykey",$jdecode) && array_key_exists("value",$jdecode)){
                         $response = $this->insertUpdateKey($jdecode); 
-                        echo $response;
+                        return $response;
                     }else{
-                      echo "json key mykey or value doesnt exist";
+                      return "json key mykey or value doesnt exist";
                     }
                 }else{
                     //If no json pass, randomly generate a key and value.
                     $response = $this->generateKey();                       
-                    echo $response;
+                    return $response;
                 }
                 break;
 
             default:
                 $response = $this->notFoundResponse();                       
-                echo $response;
+                return $response;
                 break;
         }
     }
