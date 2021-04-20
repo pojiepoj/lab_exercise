@@ -1236,3 +1236,4 @@ vendor/webmozart/assert/src/InvalidArgumentException.php
 vendor/webmozart/assert/src/Mixin.php
 vendor/sebastian/diff/tests/fixtures/out/.editorconfig
 vendor/sebastian/diff/tests/fixtures/out/.editorconfig
+vendor/sebastian/diff/tests/fixtures/out/.editorconfig
