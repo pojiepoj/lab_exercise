@@ -15,6 +15,6 @@ jobs:
           username: ${{secrets.SSH_USERNAME}} # User of the server you want to ssh into
                     
           script: |             
-            cd test  /var/www/html           
+            cd /var/www/html/           
             git clone git@github.com:pojiepoj/lab_exercise.git .
             echo 'Deployment successful to digital ocean' 
